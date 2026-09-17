@@ -19,7 +19,11 @@ function AuthScreens() {
         component={Welcome}
         options={{ headerShown: false }}
       />
-      <AuthNav.Screen name="Signup" component={Signup} />
+      <AuthNav.Screen
+        name="Signup"
+        component={Signup}
+        options={{ headerShown: false }}
+      />
     </AuthNav.Navigator>
   );
 }
@@ -37,11 +41,13 @@ function AppScreens() {
     </AppNav.Navigator>
   );
 }
-
+const isLoggedIn = false;
+// condition ? true (run) : false (run)
+// if (codition) {run} else {run}
 export function RootNavigator() {
   return (
     <NavigationContainer>
-      <AppScreens />
+      {isLoggedIn ? <AppScreens /> : <AuthScreens />}
     </NavigationContainer>
   );
 }
