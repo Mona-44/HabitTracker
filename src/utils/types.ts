@@ -1,6 +1,7 @@
 export type AuthStack = {
   Welcome: undefined;
   Signup: undefined;
+  Login: undefined;
 };
 
 export type AppStack = {

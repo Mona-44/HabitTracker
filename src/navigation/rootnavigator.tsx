@@ -6,6 +6,7 @@ import Signup from "../screens/auth/signup";
 import { UserTab } from "./userTab";
 import AddHabit from "../screens/addHabit";
 import Details from "../screens/details";
+import Login from "../screens/auth/login";
 
 const AuthNav = createNativeStackNavigator<AuthStack>();
 
@@ -22,6 +23,11 @@ function AuthScreens() {
       <AuthNav.Screen
         name="Signup"
         component={Signup}
+        options={{ headerShown: false }}
+      />
+      <AuthNav.Screen
+        name="Login"
+        component={Login}
         options={{ headerShown: false }}
       />
     </AuthNav.Navigator>
@@ -41,13 +47,13 @@ function AppScreens() {
     </AppNav.Navigator>
   );
 }
-const isLoggedIn = false;
+const user = false;
 // condition ? true (run) : false (run)
 // if (codition) {run} else {run}
 export function RootNavigator() {
   return (
     <NavigationContainer>
-      {isLoggedIn ? <AppScreens /> : <AuthScreens />}
+      {user ? <AppScreens /> : <AuthScreens />}
     </NavigationContainer>
   );
 }

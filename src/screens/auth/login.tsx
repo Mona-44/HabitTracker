@@ -18,76 +18,61 @@ import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/firebase";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AuthStack } from "../../utils/types";
-
-type SignupType = NativeStackNavigationProp<AuthStack, "Signup">;
 
 // npm install firebase
 // npx expo install @react-native-async-storage/async-storage
 
-export default function Signup() {
+export default function Login() {
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation<SignupType>();
 
-  const onSubmit = async (data: SignupSchemaType) => {
+  const onSubmit = async (data: LoginSchemaType) => {
     setLoading(true);
-    // @Johndoe01
     try {
-      const result = await createUserWithEmailAndPassword(
+      const result = await signInWithEmailAndPassword(
         auth,
         data.email,
         data.password,
       );
 
       if (result) {
-        console.log("SIGNUP SUCEESSFUL", result.user);
+        console.log("LOGIN SUCEESSFUL", result.user);
       }
 
       setLoading(false);
     } catch (error) {
-      console.error("ERROR SIGNING UP", error);
+      console.error("ERROR LOGINING IN", error);
       setLoading(false);
     }
   };
 
-  const signupSchema = z
-    .object({
-      fullName: z.string().min(4, "Full name must be at least 4 characters."),
-      email: z.email("Please enter a valid email"),
-      password: z
-        .string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[A-Z]/, "Password must have at least one uppercase letter")
-        .regex(/[a-z]/, "Password must have at least one lowercase letter")
-        .regex(/[0-9]/, "Password must have at least one number")
-        .regex(
-          /[^a-zA-Z0-9]/,
-          "Password must have at least one special character",
-        ),
-      passwordConfirmation: z.string().min(8, "Both passwords must be equal"),
-    })
-    .refine((data) => data.password === data.passwordConfirmation, {
-      message: "Password must match",
-      path: ["passwordConfirmation"],
-    });
-  type SignupSchemaType = z.infer<typeof signupSchema>;
+  const loginSchema = z.object({
+    email: z.email("Please enter a valid email"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must have at least one uppercase letter")
+      .regex(/[a-z]/, "Password must have at least one lowercase letter")
+      .regex(/[0-9]/, "Password must have at least one number")
+      .regex(
+        /[^a-zA-Z0-9]/,
+        "Password must have at least one special character",
+      ),
+  });
+
+  type LoginSchemaType = z.infer<typeof loginSchema>;
 
   const {
     control,
     handleSubmit,
     formState: { errors, touchedFields },
-  } = useForm<SignupSchemaType>({
+  } = useForm<LoginSchemaType>({
     defaultValues: {
-      fullName: "",
       email: "",
       password: "",
-      passwordConfirmation: "",
     },
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(loginSchema),
   });
 
   return (
@@ -109,39 +94,6 @@ export default function Signup() {
 
       {/* Form Section */}
       <View style={styles.form}>
-        {/* Full Name Input */}
-        <View>
-          {/* Lable Text */}
-          <Text style={styles.label}>Full Name</Text>
-          {/* Input Field - The Input Container */}
-          <View style={styles.inputField}>
-            <Ionicons
-              style={styles.inputIcon}
-              name="person"
-              size={24}
-              color="gray"
-            />
-            <View style={styles.inputView}>
-              <Controller
-                control={control}
-                name="fullName"
-                render={({ field: { onChange, value, onBlur } }) => (
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter your full name"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-              />
-            </View>
-          </View>
-          {touchedFields.fullName && errors.fullName && (
-            <Text style={styles.errorText}>{errors.fullName?.message}</Text>
-          )}
-        </View>
-
         {/* Email Input */}
         <View>
           {/* Lable Text */}
@@ -212,44 +164,6 @@ export default function Signup() {
           )}
         </View>
 
-        {/* Confirm Password Input */}
-        <View>
-          {/* Lable Text */}
-          <Text style={styles.label}>Confirm password</Text>
-          {/* Input Field - The Input Container */}
-          <View style={styles.inputField}>
-            <Ionicons
-              style={styles.inputIcon}
-              name="lock-closed"
-              size={24}
-              color="gray"
-            />
-            <View style={styles.inputView}>
-              <Controller
-                control={control}
-                name="passwordConfirmation"
-                render={({ field: { value, onChange, onBlur } }) => (
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Confirm your password"
-                    secureTextEntry={true}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-              />
-            </View>
-          </View>
-
-          {touchedFields.passwordConfirmation &&
-            errors.passwordConfirmation && (
-              <Text style={styles.errorText}>
-                {errors.passwordConfirmation?.message}
-              </Text>
-            )}
-        </View>
-
         {/* Button */}
         <TouchableOpacity style={styles.btn} onPress={handleSubmit(onSubmit)}>
           {loading ? (
@@ -260,10 +174,8 @@ export default function Signup() {
         </TouchableOpacity>
       </View>
       <View style={styles.bottom}>
-        <Text style={styles.bottomText}>Already have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.bottomLink}>Log in</Text>
-        </TouchableOpacity>
+        <Text style={styles.bottomText}>Don't have an account?</Text>
+        <Text style={styles.bottomLink}>Sign up</Text>
       </View>
     </View>
   );
