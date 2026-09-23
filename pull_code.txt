@@ -1,0 +1,24 @@
+Good Evening Everyone,
+So concerning my GitHub and how to pull my code, here are the commands:
+
+1. To Get the latest code:
+Whenever there is an update from the class repository, run:
+
+git pull myWork main
+
+This gets the latest code from the class repository.
+
+2. If your code becomes broken or mismatched:
+
+That is if for some reason my code and code is not matching maybe because you didn't copy our previous code well. Like today.
+Replace your code with the latest class version, run:
+git fetch myWork
+git reset --hard myWork/main
+
+3. Save your work to your GitHub:
+
+After making your changes:
+git add .
+git commit -m "Your Changes"
+git push
+Your changes will be pushed to your own GitHub repository.
