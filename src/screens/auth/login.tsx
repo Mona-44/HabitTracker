@@ -20,31 +20,19 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/firebase";
+import { useUser } from "../../context/UserContext";
+import { useAuth } from "../../context/AuthContext";
 
 // npm install firebase
 // npx expo install @react-native-async-storage/async-storage
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible]= useState(false)
+  const {Login}= useAuth();
 
   const onSubmit = async (data: LoginSchemaType) => {
-    setLoading(true);
-    try {
-      const result = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password,
-      );
-
-      if (result) {
-        console.log("LOGIN SUCEESSFUL", result.user);
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("ERROR LOGINING IN", error);
-      setLoading(false);
-    }
+    Login(data.email, data.password);
   };
 
   const loginSchema = z.object({
@@ -87,7 +75,7 @@ export default function Login() {
 
       {/* Header Section */}
       <View style={styles.header}>
-        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.title}>Sign In to HabitTracker</Text>
         <Text style={styles.subtitle}>Start your journey with HabitTrack</Text>
         {/* <Text style={styles.subtitle}>Welcome {name}</Text> */}
       </View>
@@ -147,16 +135,24 @@ export default function Login() {
                 name="password"
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextInput
-                    style={styles.input}
-                    placeholder="Enter your pasword"
-                    secureTextEntry={true}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
+                                      style={styles.input}
+                                      placeholder="Enter your pasword"
+                                      secureTextEntry={!passwordVisible}
+                                      value={value}
+                                      onChangeText={onChange}
+                                      onBlur={onBlur}
+                                     
+                                    />
                 )}
               />
             </View>
+            <Ionicons
+                          style={styles.inputIcon}
+                          name={passwordVisible? "eye":"eye-off"}
+                          size={24}
+                          color="gray"
+                          onPress={()=> setPasswordVisible(!passwordVisible)}
+                        />
           </View>
 
           {touchedFields.password && errors.password && (
@@ -169,7 +165,7 @@ export default function Login() {
           {loading ? (
             <ActivityIndicator size="large" color={COLORS.altColor} />
           ) : (
-            <Text style={styles.btnText}>Sign Up</Text>
+            <Text style={styles.btnText}>Log In</Text>
           )}
         </TouchableOpacity>
       </View>

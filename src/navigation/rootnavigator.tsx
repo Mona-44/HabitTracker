@@ -7,6 +7,9 @@ import { UserTab } from "./userTab";
 import AddHabit from "../screens/addHabit";
 import Details from "../screens/details";
 import Login from "../screens/auth/login";
+import FireStoreDemo from "../screens/firestoreDemo";
+import { useAuth } from "../context/AuthContext";
+
 
 const AuthNav = createNativeStackNavigator<AuthStack>();
 
@@ -44,13 +47,15 @@ function AppScreens() {
       />
       <AppNav.Screen name="AddHabit" component={AddHabit} />
       <AppNav.Screen name="Details" component={Details} />
+      <AppNav.Screen name="FireStoreDemo" component={FireStoreDemo} />
     </AppNav.Navigator>
   );
 }
-const user = false;
+
 // condition ? true (run) : false (run)
 // if (codition) {run} else {run}
 export function RootNavigator() {
+  const {user} = useAuth();
   return (
     <NavigationContainer>
       {user ? <AppScreens /> : <AuthScreens />}
